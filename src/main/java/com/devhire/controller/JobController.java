@@ -3,6 +3,7 @@ package com.devhire.controller;
 import java.util.List;
 import java.util.Optional;
 
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.http.ResponseEntity;
@@ -32,7 +33,7 @@ public class JobController {
 
     }
     @PostMapping
-    public Job createJob(@RequestBody Job job) {
+    public Job createJob(@Valid @RequestBody Job job) {
         return jobService.createJob(job);
     }
     @GetMapping("/{id}")
