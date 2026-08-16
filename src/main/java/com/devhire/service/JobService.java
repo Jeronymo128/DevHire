@@ -1,6 +1,7 @@
 package com.devhire.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -25,6 +26,9 @@ public class JobService {
         return jobRepository.save(job);
      
     }
+    public Optional<Job> getJobById(Long id) {
+        return jobRepository.findById(id);
+}
 
     
 }
