@@ -3,6 +3,8 @@ package com.devhire.controller;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,6 +40,23 @@ public class JobController {
         return jobService.getJobById(id)
             .map(ResponseEntity::ok)
             .orElse(ResponseEntity.notFound().build());
+    }
+    @PutMapping("/{id}")
+    public ResponseEntity<Job> updateJob(
+        @PathVariable Long id,
+        @RequestBody Job jobDetails) {
+
+        return jobService.updateJob(id, jobDetails)
+            .map(ResponseEntity::ok)
+            .orElse(ResponseEntity.notFound().build());
+    }
+    @DeleteMapping("/{id}")
+     public ResponseEntity<Void> deleteJob(@PathVariable Long id) {
+       if (jobService.deleteJob(id)) {
+        return ResponseEntity.noContent().build();
+      }
+
+        return ResponseEntity.notFound().build();
     }
 }
 
