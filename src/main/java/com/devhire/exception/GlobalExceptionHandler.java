@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -22,6 +23,15 @@ public ResponseEntity<Map<String, String>> handleValidationErrors(
 
                 return ResponseEntity.badRequest().body(errors);
 
+}
+@ExceptionHandler(HttpMessageNotReadableException.class)
+public ResponseEntity<Map<String, String>> handleInvalidJson(
+        HttpMessageNotReadableException exception) {
+
+    Map<String, String> error = new HashMap<>();
+    error.put("error", "Invalid request data");
+
+    return ResponseEntity.badRequest().body(error);
 }
 
 }
