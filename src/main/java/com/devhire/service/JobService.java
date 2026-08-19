@@ -5,6 +5,8 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import com.devhire.dto.JobRequestDTO;
+import com.devhire.dto.JobResponseDTO;
 import com.devhire.model.Job;
 import com.devhire.repository.JobRepository;
 
@@ -19,26 +21,45 @@ public class JobService {
 
 
     }
-    public List<Job> getAllJobs() {
-        return jobRepository.findAll();
+    public List<JobResponseDTO> getAllJobs() {
+    return jobRepository.findAll()
+            .stream()
+            .map(this::toResponseDTO)
+            .toList();
     }
-    public Job createJob(Job job) {
-        return jobRepository.save(job);
+    
+    public JobResponseDTO createJob(JobRequestDTO jobRequest) {
+    Job job = new Job();
+
+    job.setTitle(jobRequest.getTitle());
+    job.setDescription(jobRequest.getDescription());
+    job.setLocation(jobRequest.getLocation());
+    job.setType(jobRequest.getType());
+    job.setStatus(jobRequest.getStatus());
+
+    Job savedJob = jobRepository.save(job);
+
+    return toResponseDTO(savedJob);
+    }
      
+
+    public Optional<JobResponseDTO> getJobById(Long id) {
+    return jobRepository.findById(id)
+            .map(this::toResponseDTO);
     }
-    public Optional<Job> getJobById(Long id) {
-        return jobRepository.findById(id);
-    }
-    public Optional<Job> updateJob(Long id, Job jobDetails) {
+    
+    public Optional<JobResponseDTO> updateJob(Long id, JobRequestDTO jobRequest) {
         return jobRepository.findById(id)
             .map(job -> {
-                job.setTitle(jobDetails.getTitle());
-                job.setDescription(jobDetails.getDescription());
-                job.setLocation(jobDetails.getLocation());
-                job.setType(jobDetails.getType());
-                job.setStatus(jobDetails.getStatus());
+                job.setTitle(jobRequest.getTitle());
+                job.setDescription(jobRequest.getDescription());
+                job.setLocation(jobRequest.getLocation());
+                job.setType(jobRequest.getType());
+                job.setStatus(jobRequest.getStatus());
 
-                return jobRepository.save(job);
+                Job updatedJob = jobRepository.save(job);
+                
+                return toResponseDTO(updatedJob);
             });
     }
     public boolean deleteJob(Long id) {
@@ -48,6 +69,19 @@ public class JobService {
         }
         return false;
     }
+
+    private JobResponseDTO toResponseDTO(Job job) {
+    JobResponseDTO response = new JobResponseDTO();
+
+    response.setId(job.getId());
+    response.setTitle(job.getTitle());
+    response.setDescription(job.getDescription());
+    response.setLocation(job.getLocation());
+    response.setType(job.getType());
+    response.setStatus(job.getStatus());
+
+    return response;
+}
 
     
 }
