@@ -5,7 +5,6 @@ import com.devhire.enums.JobStatus;
 
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.EnumType;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -19,11 +18,8 @@ public class Job {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @NotBlank(message = "Title is required")
     private String title;
-    @NotBlank(message = "Description is required")
     private String description;
-    @NotBlank(message = "Location is required")
     private String location;
     @Enumerated(EnumType.STRING)
     private JobType type;
