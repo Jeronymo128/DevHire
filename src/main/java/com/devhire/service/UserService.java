@@ -1,17 +1,13 @@
 package com.devhire.service;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-
 import com.devhire.model.User;
+import com.devhire.dto.LoginRequestDTO;
 import com.devhire.dto.UserRequestDTO;
 import com.devhire.dto.UserResponseDTO;
 import com.devhire.repository.UserRepository;
+import com.devhire.exception.InvalidCredentialsException;
 
 @Service
 public class UserService {
@@ -56,4 +52,16 @@ public class UserService {
 
     return toResponseDTO(savedUser);
     }
+
+    public UserResponseDTO login(LoginRequestDTO loginRequest) {
+
+    User user = userRepository.findByEmail(loginRequest.getEmail())
+            .orElseThrow(() -> new InvalidCredentialsException("Invalid email or password"));
+
+    if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
+        throw new InvalidCredentialsException("Invalid email or password");
+    }
+
+    return toResponseDTO(user);
+}
 }

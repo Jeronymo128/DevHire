@@ -42,5 +42,14 @@ public ResponseEntity<Map<String, String>> handleIllegalArgument(
 
     return ResponseEntity.status(409).body(error);
 }
+@ExceptionHandler(InvalidCredentialsException.class)
+public ResponseEntity<Map<String, String>> handleInvalidCredentials(
+        InvalidCredentialsException exception) {
+
+    Map<String, String> error = new HashMap<>();
+    error.put("error", exception.getMessage());
+
+    return ResponseEntity.status(401).body(error);
+}
 
 }
