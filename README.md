@@ -1,10 +1,10 @@
 # DevHire
 
-DevHire is a REST API for a developer recruitment platform. The current backend supports user registration, credential verification, and job management. It is built with Spring Boot and persists data in PostgreSQL.
+DevHire é uma API REST para uma plataforma de recrutamento de desenvolvedores. Atualmente, o backend oferece cadastro de usuários, verificação de credenciais e gerenciamento de vagas. A aplicação foi desenvolvida com Spring Boot e utiliza PostgreSQL para persistência de dados.
 
-This repository currently contains the backend only. Authentication tokens, authorization rules, and job application workflows are not implemented yet.
+Este repositório contém apenas o backend. Tokens de autenticação, regras de autorização e fluxos de candidatura a vagas ainda não estão implementados.
 
-## Technologies
+## Tecnologias
 
 - Java 21
 - Spring Boot 4.1.0
@@ -13,48 +13,48 @@ This repository currently contains the backend only. Authentication tokens, auth
 - Spring Security
 - Jakarta Bean Validation
 - PostgreSQL
-- BCrypt password hashing
+- Hash de senhas com BCrypt
 - Maven
 
-## Architecture
+## Arquitetura
 
-The application follows a layered architecture:
+A aplicação segue uma arquitetura em camadas:
 
-- **Controllers** expose the REST endpoints and validate incoming request bodies.
-- **Services** contain user, login, and job business logic and map entities to response DTOs.
-- **Repositories** use Spring Data JPA for database access.
-- **Models** represent the `users` and `jobs` database entities.
-- **DTOs** define API request and response payloads, keeping entity details out of the public contract.
-- **Exception handling** centralizes validation, malformed request, duplicate email, and invalid credential responses.
-- **Configuration** provides BCrypt password encoding and the current Spring Security filter chain.
+- **Controllers** expõem os endpoints REST e validam os corpos das requisições recebidas.
+- **Services** concentram as regras de negócio de usuários, login e vagas, além de mapear entidades para DTOs de resposta.
+- **Repositories** utilizam Spring Data JPA para acessar o banco de dados.
+- **Models** representam as entidades `users` e `jobs` do banco de dados.
+- **DTOs** definem os payloads de entrada e saída da API, mantendo os detalhes das entidades fora do contrato público.
+- **Exception handling** centraliza as respostas para erros de validação, requisições malformadas, e-mails duplicados e credenciais inválidas.
+- **Configuration** fornece a codificação de senhas com BCrypt e a configuração atual do filtro do Spring Security.
 
-## Implemented Features
+## Funcionalidades implementadas
 
-- User registration with `CANDIDATE` or `COMPANY` roles
-- Email format and required-field validation
-- Duplicate email detection
-- BCrypt password hashing before persistence
-- Credential verification by email and password
-- User responses that do not expose password hashes
-- Create, list, retrieve, update, and delete job records
-- Job types: `FULL_TIME`, `PART_TIME`, `INTERNSHIP`, and `CONTRACT`
-- Job statuses: `OPEN` and `CLOSED`
-- Consistent handling for validation errors, malformed JSON, duplicate emails, and invalid credentials
+- Cadastro de usuários com os perfis `CANDIDATE` ou `COMPANY`
+- Validação do formato de e-mail e dos campos obrigatórios
+- Detecção de e-mails duplicados
+- Hash de senhas com BCrypt antes da persistência
+- Verificação de credenciais por e-mail e senha
+- Respostas de usuário sem exposição do hash da senha
+- Criação, listagem, consulta, atualização e exclusão de vagas
+- Tipos de vaga: `FULL_TIME`, `PART_TIME`, `INTERNSHIP` e `CONTRACT`
+- Status de vaga: `OPEN` e `CLOSED`
+- Tratamento consistente de erros de validação, JSON malformado, e-mails duplicados e credenciais inválidas
 
-> The login endpoint currently verifies credentials and returns user data. It does not create a session or issue a token. All endpoints are currently public because authorization has not been implemented.
+> Atualmente, o endpoint de login verifica as credenciais e retorna os dados do usuário. Ele não cria uma sessão nem emite um token. Todos os endpoints são públicos porque a autorização ainda não foi implementada.
 
-## API Endpoints
+## Endpoints da API
 
-The API runs at `http://localhost:8080` by default.
+Por padrão, a API é executada em `http://localhost:8080`.
 
-### Users and authentication
+### Usuários e autenticação
 
-| Method | Endpoint | Description | Success |
+| Método | Endpoint | Descrição | Sucesso |
 | --- | --- | --- | --- |
-| `POST` | `/api/users` | Register a user | `200 OK` |
-| `POST` | `/api/auth/login` | Verify email and password | `200 OK` |
+| `POST` | `/api/users` | Cadastra um usuário | `200 OK` |
+| `POST` | `/api/auth/login` | Verifica e-mail e senha | `200 OK` |
 
-#### Register a user
+#### Cadastrar um usuário
 
 ```http
 POST /api/users
@@ -70,7 +70,7 @@ Content-Type: application/json
 }
 ```
 
-Successful response:
+Resposta de sucesso:
 
 ```json
 {
@@ -81,9 +81,9 @@ Successful response:
 }
 ```
 
-Allowed roles are `CANDIDATE` and `COMPANY`. Registering an existing email returns `409 Conflict`.
+Os perfis permitidos são `CANDIDATE` e `COMPANY`. O cadastro de um e-mail já existente retorna `409 Conflict`.
 
-#### Verify credentials
+#### Verificar credenciais
 
 ```http
 POST /api/auth/login
@@ -97,23 +97,23 @@ Content-Type: application/json
 }
 ```
 
-Valid credentials return the same user response shape shown above. Invalid credentials return `401 Unauthorized`.
+Credenciais válidas retornam a mesma estrutura de resposta de usuário apresentada acima. Credenciais inválidas retornam `401 Unauthorized`.
 
-### Jobs
+### Vagas
 
-| Method | Endpoint | Description | Success |
+| Método | Endpoint | Descrição | Sucesso |
 | --- | --- | --- | --- |
-| `GET` | `/api/jobs` | List all jobs | `200 OK` |
-| `POST` | `/api/jobs` | Create a job | `200 OK` |
-| `GET` | `/api/jobs/{id}` | Retrieve a job by ID | `200 OK` |
-| `PUT` | `/api/jobs/{id}` | Replace a job's current values | `200 OK` |
-| `DELETE` | `/api/jobs/{id}` | Delete a job | `204 No Content` |
+| `GET` | `/api/jobs` | Lista todas as vagas | `200 OK` |
+| `POST` | `/api/jobs` | Cria uma vaga | `200 OK` |
+| `GET` | `/api/jobs/{id}` | Consulta uma vaga pelo ID | `200 OK` |
+| `PUT` | `/api/jobs/{id}` | Substitui os dados atuais de uma vaga | `200 OK` |
+| `DELETE` | `/api/jobs/{id}` | Exclui uma vaga | `204 No Content` |
 
-`GET`, `PUT`, and `DELETE` operations for an unknown job ID return `404 Not Found` where applicable.
+As operações `GET`, `PUT` e `DELETE` para um ID de vaga inexistente retornam `404 Not Found`, quando aplicável.
 
-#### Create or update a job
+#### Criar ou atualizar uma vaga
 
-`POST /api/jobs` and `PUT /api/jobs/{id}` use the following request body:
+`POST /api/jobs` e `PUT /api/jobs/{id}` utilizam o seguinte corpo de requisição:
 
 ```json
 {
@@ -125,9 +125,9 @@ Valid credentials return the same user response shape shown above. Invalid crede
 }
 ```
 
-All fields are required. Allowed `type` values are `FULL_TIME`, `PART_TIME`, `INTERNSHIP`, and `CONTRACT`; allowed `status` values are `OPEN` and `CLOSED`.
+Todos os campos são obrigatórios. Os valores permitidos para `type` são `FULL_TIME`, `PART_TIME`, `INTERNSHIP` e `CONTRACT`; os valores permitidos para `status` são `OPEN` e `CLOSED`.
 
-A successful response includes the generated or existing job ID:
+Uma resposta de sucesso inclui o ID gerado ou já existente da vaga:
 
 ```json
 {
@@ -140,9 +140,9 @@ A successful response includes the generated or existing job ID:
 }
 ```
 
-### Error responses
+### Respostas de erro
 
-Request validation errors return `400 Bad Request` as a field-to-message map:
+Erros de validação da requisição retornam `400 Bad Request` como um mapa de campos e mensagens:
 
 ```json
 {
@@ -151,7 +151,7 @@ Request validation errors return `400 Bad Request` as a field-to-message map:
 }
 ```
 
-Malformed JSON or invalid enum values also return `400 Bad Request`:
+JSON malformado ou valores inválidos para enums também retornam `400 Bad Request`:
 
 ```json
 {
@@ -159,46 +159,46 @@ Malformed JSON or invalid enum values also return `400 Bad Request`:
 }
 ```
 
-## Project Structure
+## Estrutura do projeto
 
 ```text
 src/main/
 ├── java/com/devhire/
-│   ├── config/       # Security and password encoder configuration
-│   ├── controller/   # REST controllers
-│   ├── dto/          # Request and response contracts
-│   ├── enums/        # User role, job type, and job status values
-│   ├── exception/    # Custom exception and global API error handling
-│   ├── model/        # JPA entities
-│   ├── repository/   # Spring Data JPA repositories
-│   ├── service/      # Business logic and DTO mapping
+│   ├── config/       # Configuração de segurança e do password encoder
+│   ├── controller/   # Controllers REST
+│   ├── dto/          # Contratos de requisição e resposta
+│   ├── enums/        # Perfis de usuário, tipos e status de vaga
+│   ├── exception/    # Exceção customizada e tratamento global de erros da API
+│   ├── model/        # Entidades JPA
+│   ├── repository/   # Repositories do Spring Data JPA
+│   ├── service/      # Regras de negócio e mapeamento de DTOs
 │   └── DevHireApplication.java
 └── resources/
     └── application.properties
 ```
 
-## Requirements
+## Requisitos
 
 - JDK 21
-- Maven 3.9 or later
-- A running PostgreSQL instance
+- Maven 3.9 ou superior
+- Uma instância do PostgreSQL em execução
 
-## Running Locally
+## Executando localmente
 
-1. Clone the repository and enter its directory:
+1. Clone o repositório e acesse o diretório do projeto:
 
    ```bash
    git clone <repository-url>
    cd DevHire
    ```
 
-2. Create the PostgreSQL database expected by the application:
+2. Crie o banco de dados PostgreSQL esperado pela aplicação:
 
    ```sql
    CREATE DATABASE devhire;
    ```
 
-3. Confirm that the database settings in `src/main/resources/application.properties` match your local environment. The current configuration uses:
+3. Verifique se as configurações do banco de dados em `src/main/resources/application.properties` correspondem ao seu ambiente local. A configuração atual utiliza:
 
    ```properties
    spring.datasource.url=jdbc:postgresql://localhost:5432/devhire
@@ -206,7 +206,7 @@ src/main/
    spring.datasource.password=${DB_PASSWORD}
    ```
 
-4. Set the `DB_PASSWORD` environment variable to the password of your PostgreSQL user.
+4. Defina a variável de ambiente `DB_PASSWORD` com a senha do seu usuário do PostgreSQL.
 
    PowerShell:
 
@@ -220,18 +220,18 @@ src/main/
    export DB_PASSWORD="your-postgresql-password"
    ```
 
-5. Start the application:
+5. Inicie a aplicação:
 
    ```bash
    mvn spring-boot:run
    ```
 
-The API will be available at `http://localhost:8080`. Hibernate is configured with `spring.jpa.hibernate.ddl-auto=update`, so the required tables are created or updated when the application starts.
+A API estará disponível em `http://localhost:8080`. O Hibernate está configurado com `spring.jpa.hibernate.ddl-auto=update`, portanto as tabelas necessárias são criadas ou atualizadas durante a inicialização da aplicação.
 
 ## Roadmap
 
-- JWT authentication
-- Role-based authorization
-- Job applications
-- Automated tests
-- Swagger/OpenAPI documentation
+- Autenticação com JWT
+- Autorização baseada em perfis
+- Candidaturas a vagas
+- Testes automatizados
+- Documentação com Swagger/OpenAPI
