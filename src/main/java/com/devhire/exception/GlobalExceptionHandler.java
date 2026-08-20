@@ -33,5 +33,14 @@ public ResponseEntity<Map<String, String>> handleInvalidJson(
 
     return ResponseEntity.badRequest().body(error);
 }
+@ExceptionHandler(IllegalArgumentException.class)
+public ResponseEntity<Map<String, String>> handleIllegalArgument(
+        IllegalArgumentException exception) {
+
+    Map<String, String> error = new HashMap<>();
+    error.put("error", exception.getMessage());
+
+    return ResponseEntity.status(409).body(error);
+}
 
 }
